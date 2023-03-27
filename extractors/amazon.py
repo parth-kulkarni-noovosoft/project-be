@@ -54,6 +54,9 @@ def sanitize_next_link(next_link):
 def sanitize_amazon_data(raw_data):
   extractor = get_amazon_extractor();
   data = extractor.extract(raw_data)
+  if data['reviews'] is None:
+    return None
+
   for review in data['reviews']:
     if 'rating' in review:
       review['rating'] = sanitize_rating(review['rating'])
@@ -65,5 +68,6 @@ def sanitize_amazon_data(raw_data):
       review['verified'] = sanitize_verified_purchase(review['verified'])
     
   if 'next_link' in data:
-    data['next_link'] = sanitize_next_link(data['next_link'])
+    if ('signin' not in data['next_link']):
+      data['next_link'] = sanitize_next_link(data['next_link'])
   return data

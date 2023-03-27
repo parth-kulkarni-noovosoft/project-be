@@ -8,7 +8,7 @@ extractor = Extractor()
 
 URLS = []
 REVIEWS = []
-LIMIT = 5
+LIMIT = 20
 
 def scrape_page_data(url):    
     headers = {
@@ -32,7 +32,7 @@ def fetch_data(url):
     global URLS
     data = scrape_page_data(url)
     json_data = extractor.amazon(data)
-    if 'next_link' in json_data:
+    if json_data is not None and 'next_link' in json_data:
         URLS.append(json_data['next_link'])
     return json_data
 
@@ -42,17 +42,19 @@ def store_data(data):
 
 def fetch_and_save_data(url):
     d = fetch_data(url)
-    store_data(d)
+    if d is not None:
+        store_data(d)
 
 def save_data():
     with open('data.json', 'w') as outfile:
         json.dump(REVIEWS, outfile)
 
 if __name__ == '__main__':
-    URLS.append(*get_product_urls())
+    for url in get_product_urls():
+        URLS.append(url.strip())
     count = 0
     for url in URLS:
-        print(count)
+        print(count, url)
         if count >= LIMIT:
             break
 
