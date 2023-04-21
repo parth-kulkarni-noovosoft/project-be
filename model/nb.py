@@ -96,11 +96,23 @@ def test_with_data(summaries, dataset):
     calculate_and_print_performance_metrics(result)
     return result
 
-def sanitize_data(data):
+def test_with_new_data(summaries, dataset):
+    guesses = []
+
+    for row in dataset:
+        probabilities = calculate_class_probabilities(summaries, row)
+        guesses.append(get_guess(probabilities))
+
+    print(guesses)
+
+def sanitize_data(data, is_new = False):
     dataset = []
     for review in data:
         vector = vectorize_text(get_full_review_text(review))
-        dataset.append([*vector, review['rating'], review['authentic']])
+        row_content = [*vector, review['rating']]
+        if not is_new:
+            row_content.append(review['authentic'])
+        dataset.append(row_content)
     return dataset
 
 
