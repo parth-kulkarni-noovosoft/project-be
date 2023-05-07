@@ -5,7 +5,7 @@ from pprint import pprint
 BOW = {}
 
 def load_data():
-    with open('labelled_data.json') as json_input:
+    with open('labelled_authenticty_sentiment_data.json') as json_input:
         data = json.load(json_input)
     
     split_index = int(len(data) * 0.8)
@@ -109,7 +109,7 @@ def sanitize_data(data, is_new = False):
     dataset = []
     for review in data:
         vector = vectorize_text(get_full_review_text(review))
-        row_content = [*vector, review['rating']]
+        row_content = [*vector, review['rating'], review['polarity']]
         if not is_new:
             row_content.append(review['authentic'])
         dataset.append(row_content)
