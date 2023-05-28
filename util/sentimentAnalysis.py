@@ -7,7 +7,7 @@ WORD_POLARITY = {}
 def load_sentiwordnet():
     global WORD_POLARITY
 
-    with open("assets/SentiWordNet_3.0.0.txt", "r") as f:
+    with open("../assets/SentiWordNet_3.0.0.txt", "r") as f:
         for line in f:
             if line.startswith("#"):
                 continue

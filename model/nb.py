@@ -3,9 +3,10 @@ from math import exp, sqrt, pi
 from pprint import pprint
 
 BOW = {}
+SUMMARIES = None
 
 def load_data():
-    with open('labelled_authenticty_sentiment_data.json') as json_input:
+    with open('../labelled_authenticity_sentiment_data.json') as json_input:
         data = json.load(json_input)
     
     split_index = int(len(data) * 0.8)
@@ -115,10 +116,11 @@ def sanitize_data(data, is_new = False):
         dataset.append(row_content)
     return dataset
 
-
 def train_model(data):
+    global SUMMARIES
     dataset = sanitize_data(data)
     summaries = get_class_column_summary(dataset)
+    SUMMARIES = summaries
     return summaries
 
 def calculate_confusion_matrix(answers, guesses):
@@ -162,10 +164,24 @@ def calculate_and_print_performance_metrics(result):
     print(f"Recall: {recall}")
     print(f"F1 Score: {f1_score}\n")
 
+def predict(data):
+    global SUMMARIES
+    guesses = []
+    dataset = sanitize_data(data, True)
+
+    for row in dataset:
+        probabilities = calculate_class_probabilities(SUMMARIES, row)
+        guesses.append((get_guess(probabilities), probabilities))
+
+    return guesses
+
+def load_model():
+    train_data, test_data = load_data()
+    build_vocab([*train_data, *test_data])
+    train_model(train_data)
 
 if __name__ == '__main__':
     train_data, test_data = load_data()
-
     build_vocab([*train_data, *test_data])
     summaries = train_model(train_data)
 
